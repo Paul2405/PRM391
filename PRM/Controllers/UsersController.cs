@@ -146,6 +146,7 @@ namespace PRM.Controllers
                     CreationDate = DateTime.Now,
                     Email = email,
                     Fullname = tokenS.Claims.First(claim => claim.Type == "name").Value,
+                    AvatarUrl = tokenS.Claims.First(claim => claim.Type == "picture").Value
                 }) ;
                 await _context.SaveChangesAsync();
                 user = _context.User.Where(u => u.Email.Equals(email)).Single();

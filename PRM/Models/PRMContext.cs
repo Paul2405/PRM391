@@ -33,14 +33,19 @@ namespace PRM.Models
         {
             modelBuilder.Entity<Comment>(entity =>
             {
-
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
-                entity.HasKey(sc => new { sc.VideoId, sc.UserId });
-
+                entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.Property(e => e.VideoId).HasColumnName("VideoID");
 
-                entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Comment_User");
+
+                entity.HasOne(d => d.Video)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.VideoId)
+                    .HasConstraintName("FK_Comment_Video");
             });
 
             modelBuilder.Entity<Like>(entity =>
@@ -49,12 +54,15 @@ namespace PRM.Models
 
                 entity.Property(e => e.VideoId).HasColumnName("VideoID");
 
-                entity.HasKey(sc => new { sc.VideoId, sc.UserId });
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Like_User");
 
-
-                entity.Property(e => e.VideoId).HasColumnName("VideoID");
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.HasOne(d => d.Video)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.VideoId)
+                    .HasConstraintName("FK_Like_Video");
             });
 
             modelBuilder.Entity<User>(entity =>

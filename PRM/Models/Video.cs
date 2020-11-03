@@ -19,6 +19,8 @@ namespace PRM.Models
         public int? LikeCount { get; set; }
         public int? CommentCount { get; set; }
 
+        public bool Status { get; set; }
+
         public virtual User user { get; set; }
 
         [JsonIgnore]

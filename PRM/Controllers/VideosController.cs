@@ -23,9 +23,10 @@ namespace PRM.Controllers
 
         // GET: api/Videos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Video>>> GetVideo()
-        {
-            return await _context.Video.ToListAsync();
+        public async Task<ICollection<Video>> GetVideo()
+        {   List<Video> videos= _context.Video.Include(v => v.Likes).Include(v => v.Comments).ThenInclude(c => c.User).ToList();
+
+            return videos;
         }
 
         // GET: api/Videos/5
@@ -45,23 +46,19 @@ namespace PRM.Controllers
         // PUT: api/Videos/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutVideo(int id, Video video)
+        [HttpPut]
+        public async Task<IActionResult> PutVideo(Video video)
         {
-            if (id != video.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(video).State = EntityState.Modified;
-
+            Video existedVideo = _context.Video.Where(v => v.Id == video.Id).FirstOrDefault();
+            existedVideo.Title = video.Title;
+            existedVideo.Decription = video.Decription;
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VideoExists(id))
+                if (!VideoExists(video.Id))
                 {
                     return NotFound();
                 }
@@ -104,13 +101,30 @@ namespace PRM.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Video>> DeleteVideo(int id)
         {
-            var video = await _context.Video.FindAsync(id);
+            Video video =  _context.Video.Where(v => v.Id == id).FirstOrDefault();
             if (video == null)
             {
                 return NotFound();
             }
+            video.Status = false;
+            await _context.SaveChangesAsync();
 
-            _context.Video.Remove(video);
+            List<Like> likes = _context.Like.Where(l => l.VideoId == id).ToList();
+            foreach(Like like in likes)
+            {
+                Like existedLike = _context.Like.Where(l => l.Id == like.Id).FirstOrDefault();
+                existedLike.Status = false;
+            }
+
+            await _context.SaveChangesAsync();
+
+
+            List<Comment> comments = _context.Comment.Where(c => c.VideoId == id).ToList();
+            foreach (Comment c in comments)
+            {
+                Comment existedComment = _context.Comment.Where(l => l.Id == c.Id).FirstOrDefault();
+                existedComment.Status = false;
+            }
             await _context.SaveChangesAsync();
 
             return video;
@@ -119,19 +133,6 @@ namespace PRM.Controllers
         private bool VideoExists(int id)
         {
             return _context.Video.Any(e => e.Id == id);
-        }
-
-        [HttpGet("{id}/detail")]
-        public async Task<ActionResult<Video>> GetVideoByID(int id)
-        {
-            var video = _context.Video.Where(v => v.Id == id).Include(v => v.Likes).ThenInclude(c => c.User).Include(v => v.Comments).ThenInclude(c => c.User).SingleOrDefault();
-
-            if (video == null)
-            {
-                return NotFound();
-            }
-
-            return video;
         }
 
         //Like
@@ -165,14 +166,15 @@ namespace PRM.Controllers
             return like;
         }
 
-        [HttpDelete("Like")]
-        public async Task<ActionResult<Like>> UnlikeVideo(int userID, int videoID)
+        [HttpDelete("Like/{id}")]
+        public async Task<ActionResult<Like>> UnlikeVideo(int id)
         {
 
-            var like = _context.Like.Where(l => l.VideoId == videoID && l.UserId == userID).FirstOrDefault();
+            var like = _context.Like.Where(l => l.Id == id).FirstOrDefault();
 
             like.Status = false;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
 
             var totalLike = _context.Video.Where(v => v.Id == like.VideoId).Select(v => v.LikeCount).FirstOrDefault();
 
@@ -183,7 +185,8 @@ namespace PRM.Controllers
             };
 
             _context.Video.Attach(video).Property(v => v.LikeCount).IsModified = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
             return like;
         }
 
@@ -213,7 +216,7 @@ namespace PRM.Controllers
         {
             Comment existedComment = _context.Comment.Where(c => c.Id == comment.Id).FirstOrDefault();
             existedComment.Conttent = comment.Conttent;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return comment;
         }
 
@@ -222,7 +225,8 @@ namespace PRM.Controllers
         {
             Comment existedComment = _context.Comment.Where(c => c.Id == Id).FirstOrDefault();
             existedComment.Status = false;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
             var totalComment = _context.Video.Where(v => v.Id == existedComment.VideoId).Select(v => v.CommentCount).FirstOrDefault();
 
             var video = new Video()
@@ -232,7 +236,8 @@ namespace PRM.Controllers
             };
 
             _context.Video.Attach(video).Property(v => v.CommentCount).IsModified = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
             return existedComment;
         }
 
