@@ -33,22 +33,25 @@ namespace PRM.Models
         {
             modelBuilder.Entity<Comment>(entity =>
             {
-                entity.HasKey(sc => new { sc.UserId, sc.VideoId });
 
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
-                entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.HasKey(sc => new { sc.VideoId, sc.UserId });
+
 
                 entity.Property(e => e.VideoId).HasColumnName("VideoID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
             });
 
             modelBuilder.Entity<Like>(entity =>
             {
-                entity.HasKey(sc => new { sc.UserId, sc.VideoId });
+                entity.HasKey(sc => new { sc.VideoId, sc.UserId });
 
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.Property(e => e.VideoId).HasColumnName("VideoID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
             });
 
             modelBuilder.Entity<User>(entity =>

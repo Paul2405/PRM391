@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PRM.Models;
+using SQLitePCL;
 
 namespace PRM.Controllers
 {
@@ -123,7 +124,7 @@ namespace PRM.Controllers
         [HttpGet("{id}/detail")]
         public async Task<ActionResult<Video>> GetVideoByID(int id)
         {
-            var video = _context.Video.Where(v => v.Id == id).Include(v => v.Likes).Include(v => v.Comments).ThenInclude(c => c.User).SingleOrDefault();
+            var video = _context.Video.Where(v => v.Id == id).Include(v => v.Likes).ThenInclude(c => c.User).Include(v => v.Comments).ThenInclude(c => c.User).SingleOrDefault();
 
             if (video == null)
             {
@@ -133,17 +134,85 @@ namespace PRM.Controllers
             return video;
         }
 
-        [HttpPost("{id}/Like")]
-        public async Task<ActionResult<Video>> LikeVideo(int videoID, int userID)
+        [HttpPost("Like")]
+        public async Task<ActionResult<Like>> LikeVideo(Like like)
         {
-            var like = _context.Like.Add(new Like
+            Like chkLike = _context.Like.Where(l => l.UserId == like.UserId && l.VideoId == like.VideoId).FirstOrDefault();
+            if (chkLike != null)
             {
-                UserId = userID,
-                VideoId = videoID,
-                Status = true
-            }) ;
+                var like1 = new Like()
+                {
+                    Id = chkLike.Id,
+                    Status = true
+                };
+                _context.Like.Attach(like).Property(l => l.Status).IsModified = true;
+                _context.SaveChanges();
+            }
+            else
+            {
+                var likeModel = _context.Like.Add(like);
+                await _context.SaveChangesAsync();
+            }
+
+            var totalLike = _context.Video.Where(v => v.Id == like.VideoId).Select(v => v.LikeCount).FirstOrDefault();
+
+            var video = new Video()
+            {
+                Id = like.VideoId,
+                LikeCount = ++totalLike
+            };
+
+            _context.Video.Attach(video).Property(v => v.LikeCount).IsModified = true;
+            var chk = _context.SaveChanges();
+
+            return like;
+        }
+
+        [HttpPost("Comment")]
+        public async Task<ActionResult<Comment>> CommentVideo(Comment comment)
+        {
+            _context.Comment.Add(comment);
+            await _context.SaveChangesAsync();
+
+            var totalComment = _context.Video.Where(v => v.Id == comment.VideoId).Select(v => v.CommentCount).FirstOrDefault();
+
+            var video = new Video()
+            {
+                Id = comment.VideoId,
+                CommentCount = ++totalComment
+            };
+
+            _context.Video.Attach(video).Property(v => v.CommentCount).IsModified = true;
             _context.SaveChanges();
-            return li 
+            return comment;
+        }
+
+
+
+        [HttpDelete("Like")]
+        public async Task<ActionResult<Like>> UnLikeVideo(int LikeID)
+        {
+
+            var like = new Like()
+            {
+                Id = LikeID,
+                Status = false
+            };
+
+            _context.Like.Attach(like).Property(l => l.Status).IsModified = true;
+            _context.SaveChanges();
+
+            var totalLike = _context.Video.Where(v => v.Id == like.VideoId).Select(v => v.LikeCount).FirstOrDefault();
+
+            var video = new Video()
+            {
+                Id = like.VideoId,
+                LikeCount = --totalLike
+            };
+
+            _context.Video.Attach(video).Property(v => v.LikeCount).IsModified = true;
+            _context.SaveChanges();
+            return like;
         }
 
     }
