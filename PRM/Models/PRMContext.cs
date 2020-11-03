@@ -35,7 +35,6 @@ namespace PRM.Models
             {
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
                 entity.HasKey(sc => new { sc.VideoId, sc.UserId });
 
 
@@ -46,6 +45,10 @@ namespace PRM.Models
 
             modelBuilder.Entity<Like>(entity =>
             {
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.VideoId).HasColumnName("VideoID");
+
                 entity.HasKey(sc => new { sc.VideoId, sc.UserId });
 
 

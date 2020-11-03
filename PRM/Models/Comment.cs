@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace PRM.Models
 {
@@ -10,6 +9,8 @@ namespace PRM.Models
         public int VideoId { get; set; }
         public string Conttent { get; set; }
         public int Id { get; set; }
+
+        public bool Status { get; set; }
 
         public virtual User User { get; set; }
         public virtual Video Video { get; set; }

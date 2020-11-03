@@ -21,10 +21,10 @@ namespace PRM.Models
 
         public virtual User user { get; set; }
 
-
+        [JsonIgnore]
         public ICollection<Like> Likes { get; set; }
 
-       
+        [JsonIgnore]
 
         public ICollection<Comment> Comments { get; set; }
     }
