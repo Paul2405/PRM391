@@ -29,6 +29,11 @@ namespace PRM
             services.AddControllers();
             services.AddSwaggerDocument();
             services.AddDbContext<PRMContext>(opt => opt.UseSqlServer("Data Source=scamdbservers.database.windows.net;Initial Catalog=PRM;Persist Security Info=True;User ID=ad1999;Password=Anhdung99"));
+
+            services.AddControllersWithViews()
+      .AddNewtonsoftJson(options =>
+      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+   );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +49,7 @@ namespace PRM
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseAuthorization();
+           
 
             app.UseEndpoints(endpoints =>
             {

@@ -11,8 +11,15 @@ namespace PRM.Models
         public int? UserId { get; set; }
         public string UrlShare { get; set; }
 
-        public virtual ICollection<Comment> Comments { get; set; }
+        public int LikeCount { get; set; }
 
-        public virtual ICollection<Like> Likes { get; set; }
+        public int CommentCount { get; set; }
+
+        public virtual User user { get; set; }
+
+        public ICollection<Like> Likes { get; set; }
+
+        public ICollection<Comment> Comments { get; set; }
+
     }
 }

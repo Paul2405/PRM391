@@ -11,9 +11,5 @@ namespace PRM.Models
         public string Birthday { get; set; }
         public string Email { get; set; }
         public DateTime? CreationDate { get; set; }
-
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<Like> Like { get; set; }
-
     }
 }

@@ -25,8 +25,7 @@ namespace PRM.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-               // optionsBuilder.UseSqlServer("Server=localhost;Database=PRM;uid=haudq;password=123;Trusted_Connection=True;");
-                optionsBuilder.UseSqlServer("Data Source=scamdbservers.database.windows.net;Initial Catalog=PRM;Persist Security Info=True;User ID=ad1999;Password=Anhdung99");
+                optionsBuilder.UseSqlServer("Server=tcp:scamdbservers.database.windows.net,1433;Initial Catalog=PRM;Persist Security Info=False;User ID=ad1999;Password=Anhdung99;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 
@@ -34,62 +33,27 @@ namespace PRM.Models
         {
             modelBuilder.Entity<Comment>(entity =>
             {
-/*                entity.HasNoKey();*/
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.Property(e => e.VideoId).HasColumnName("VideoID");
-
-
                 entity.HasKey(sc => new { sc.UserId, sc.VideoId });
 
+
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.Property(e => e.VideoId).HasColumnName("VideoID");
-
-                entity.HasOne(d => d.User)
-                    .WithMany()
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_Comment_User");
-
-                entity.HasOne(d => d.Video)
-                    .WithMany()
-                    .HasForeignKey(d => d.VideoId)
-                    .HasConstraintName("FK_Comment_Video");
             });
 
             modelBuilder.Entity<Like>(entity =>
             {
-              /*  entity.HasNoKey();*/
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.Property(e => e.VideoId).HasColumnName("VideoID");
-
                 entity.HasKey(sc => new { sc.UserId, sc.VideoId });
 
+
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.Property(e => e.VideoId).HasColumnName("VideoID");
-
-
-                // cấu hình key của api dưới db theo mô hình một nhiều
-                entity.HasOne(d => d.User)
-                    .WithMany()
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_Like_User");
-
-                entity.HasOne(d => d.Video)
-                    .WithMany()
-                    .HasForeignKey(d => d.VideoId)
-                    .HasConstraintName("FK_Like_Video");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Birthday)
                     .HasMaxLength(10)
@@ -108,9 +72,7 @@ namespace PRM.Models
 
             modelBuilder.Entity<Video>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Title)
                     .HasMaxLength(10)

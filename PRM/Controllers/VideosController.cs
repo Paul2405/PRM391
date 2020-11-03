@@ -31,7 +31,7 @@ namespace PRM.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Video>> GetVideo(int id)
         {
-            var video = await _context.Video.FindAsync(id);
+            var video = _context.Video.Where(v => v.Id == id).Include(v => v.Likes).Include(v => v.Comments).ThenInclude(c => c.User).SingleOrDefault();
 
             if (video == null)
             {
@@ -119,5 +119,32 @@ namespace PRM.Controllers
         {
             return _context.Video.Any(e => e.Id == id);
         }
+
+        [HttpGet("{id}/detail")]
+        public async Task<ActionResult<Video>> GetVideoByID(int id)
+        {
+            var video = _context.Video.Where(v => v.Id == id).Include(v => v.Likes).Include(v => v.Comments).ThenInclude(c => c.User).SingleOrDefault();
+
+            if (video == null)
+            {
+                return NotFound();
+            }
+
+            return video;
+        }
+
+        [HttpPost("{id}/Like")]
+        public async Task<ActionResult<Video>> LikeVideo(int videoID, int userID)
+        {
+            var like = _context.Like.Add(new Like
+            {
+                UserId = userID,
+                VideoId = videoID,
+                Status = true
+            }) ;
+            _context.SaveChanges();
+            return li 
+        }
+
     }
 }

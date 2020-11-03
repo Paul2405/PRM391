@@ -7,6 +7,8 @@ namespace PRM.Models
     {
         public int? UserId { get; set; }
         public int? VideoId { get; set; }
+        public bool? Status { get; set; }
+
 
         public virtual User User { get; set; }
         public virtual Video Video { get; set; }

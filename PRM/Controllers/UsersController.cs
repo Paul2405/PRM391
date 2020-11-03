@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PRM.Models;
 
 namespace PRM.Controllers
@@ -119,5 +121,38 @@ namespace PRM.Controllers
         {
             return _context.User.Any(e => e.Id == id);
         }
+
+        [HttpPost("auth")]
+
+        public async Task<User> getUserByToken(String jwt)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(jwt);
+            var tokenS = handler.ReadToken(jwt) as JwtSecurityToken;
+            var email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+            var firebase = tokenS.Claims.First(claim => claim.Type == "firebase").Value;
+
+
+            var user = _context.User.Where(u => u.Email.Equals(email)).FirstOrDefault();
+
+            if (user != null)
+            {
+                return user;
+            }
+            else
+            {
+                var newUser = _context.User.Add(new User
+                {
+                    CreationDate = DateTime.Now,
+                    Email = email,
+                    Fullname = tokenS.Claims.First(claim => claim.Type == "name").Value,
+                }) ;
+                await _context.SaveChangesAsync();
+                user = _context.User.Where(u => u.Email.Equals(email)).Single();
+
+                return user;
+            }
+        }
     }
 }
+
