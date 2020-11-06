@@ -136,6 +136,11 @@ namespace PRM.Controllers
         }
 
         //Like
+        [HttpGet("{Id}/Like")]
+        public async Task<ICollection<Like>> GetUserLikefromVideo(int Id)
+        {
+            return await _context.Like.Where(c => c.UserId == Id).Include(c => c.User).ToListAsync();
+        }
 
         [HttpPost("Like")]
         public async Task<ActionResult<Like>> LikeVideo(Like like)
@@ -191,6 +196,11 @@ namespace PRM.Controllers
         }
 
         //Comment
+        [HttpGet("{Id}/Comment")]
+        public async Task<ICollection<Comment>> GetCommentfromVideo(int Id)
+        {
+            return await _context.Comment.Where(c => c.UserId == Id).Include(c => c.User).ToListAsync();
+        }
 
         [HttpPost("Comment")]
         public async Task<ActionResult<Comment>> CommentVideo(Comment comment)
@@ -241,5 +251,6 @@ namespace PRM.Controllers
             return existedComment;
         }
 
+       
     }
 }
