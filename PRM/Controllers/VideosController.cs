@@ -139,7 +139,7 @@ namespace PRM.Controllers
         [HttpGet("{Id}/Like")]
         public async Task<ICollection<Like>> GetUserLikefromVideo(int Id)
         {
-            return await _context.Like.Where(c => c.UserId == Id).Include(c => c.User).ToListAsync();
+            return await _context.Like.Where(c => c.VideoId == Id).Include(c => c.User).ToListAsync();
         }
 
         [HttpPost("Like")]
