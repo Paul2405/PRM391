@@ -10263,23 +10263,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Tan\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\DELL\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Tan\\Desktop\\PRM391\\project API\\PRM391\\PRM\\PRM.csproj",
+      "projectUniqueName": "E:\\FPT\\CN7\\PRM391\\TikTUbe\\API\\PRM\\PRM391\\PRM\\PRM.csproj",
       "projectName": "PRM",
-      "projectPath": "C:\\Users\\Tan\\Desktop\\PRM391\\project API\\PRM391\\PRM\\PRM.csproj",
-      "packagesPath": "C:\\Users\\Tan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Tan\\Desktop\\PRM391\\project API\\PRM391\\PRM\\obj\\",
+      "projectPath": "E:\\FPT\\CN7\\PRM391\\TikTUbe\\API\\PRM\\PRM391\\PRM\\PRM.csproj",
+      "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
+      "outputPath": "E:\\FPT\\CN7\\PRM391\\TikTUbe\\API\\PRM\\PRM391\\PRM\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Tan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -10356,7 +10352,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
       }
     }
   }

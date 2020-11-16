@@ -23,11 +23,21 @@ namespace PRM.Controllers
 
         // GET: api/Videos
         [HttpGet]
-        public async Task<ICollection<Video>> GetVideo()
-        {   List<Video> videos= _context.Video.Include(v => v.Likes).Include(v => v.Comments).ThenInclude(c => c.User).ToList();
+        public async Task<ICollection<Video>> GetVideo([FromQuery] int pageSize, [FromQuery] int pageNum)
+        {
+            List<Video> videos = _context.Video.Include(v => v.Likes).Include(v => v.Comments).ThenInclude(c => c.User).Skip((pageNum - 1) * pageSize).Take(pageSize).ToList();
 
             return videos;
         }
+
+        [HttpGet("title")]
+        public async Task<ICollection<Video>> GetVideoByTitle([FromQuery] String title, [FromQuery] int pageSize, [FromQuery] int pageNum)
+        {
+            List<Video> videos = _context.Video.Where(v => v.Title.Contains(title)).Include(v => v.Likes).Include(v => v.Comments).ThenInclude(c => c.User).Skip((pageNum - 1) * pageSize).Take(pageSize).ToList();
+
+            return videos;
+        }
+
 
         // GET: api/Videos/5
         [HttpGet("{id}")]
@@ -101,7 +111,7 @@ namespace PRM.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Video>> DeleteVideo(int id)
         {
-            Video video =  _context.Video.Where(v => v.Id == id).FirstOrDefault();
+            Video video = _context.Video.Where(v => v.Id == id).FirstOrDefault();
             if (video == null)
             {
                 return NotFound();
@@ -110,7 +120,7 @@ namespace PRM.Controllers
             await _context.SaveChangesAsync();
 
             List<Like> likes = _context.Like.Where(l => l.VideoId == id).ToList();
-            foreach(Like like in likes)
+            foreach (Like like in likes)
             {
                 Like existedLike = _context.Like.Where(l => l.Id == like.Id).FirstOrDefault();
                 existedLike.Status = false;
@@ -136,6 +146,11 @@ namespace PRM.Controllers
         }
 
         //Like
+        [HttpGet("{Id}/Like")]
+        public async Task<ICollection<Like>> GetUserLikefromVideo(int Id)
+        {
+            return await _context.Like.Where(c => c.VideoId == Id).Include(c => c.User).ToListAsync();
+        }
 
         [HttpPost("Like")]
         public async Task<ActionResult<Like>> LikeVideo(Like like)
@@ -191,6 +206,11 @@ namespace PRM.Controllers
         }
 
         //Comment
+        [HttpGet("{Id}/Comment")]
+        public async Task<ICollection<Comment>> GetCommentfromVideo(int Id,[FromQuery] int pageSize, [FromQuery] int pageNum)
+        {
+            return await _context.Comment.Where(c => c.VideoId == Id).Include(c => c.User).Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
 
         [HttpPost("Comment")]
         public async Task<ActionResult<Comment>> CommentVideo(Comment comment)
@@ -240,6 +260,7 @@ namespace PRM.Controllers
 
             return existedComment;
         }
+
 
     }
 }

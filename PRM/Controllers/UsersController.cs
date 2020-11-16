@@ -29,6 +29,13 @@ namespace PRM.Controllers
             return await _context.User.ToListAsync();
         }
 
+        [HttpGet("{userID}/Video")]
+        public async Task<ActionResult<IEnumerable<Video>>> GetUserVideo(int userID, [FromQuery] int pageSize, [FromQuery] int pageNum)
+        {
+            return await _context.Video.Where(v => v.UserId == userID).Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
+
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
